@@ -19,7 +19,7 @@ Opt("TCPTimeout", 500)
 Opt("GUIOnEventMode", 1)
 
 ; Contants
-$version = "0.9"
+$version = "0.91a"
 $guiHeight = 600
 $guiWidth = 600
 
@@ -65,7 +65,7 @@ GUICtrlCreateGroup("Twitch Chat Connection", 10, 330, 215, 130)
 GUICtrlCreateLabel("Twitch User:", 38, 350)
 $twitchUserField = GUICtrlCreateInput("", 100, 347, 120)
 GUICtrlCreateLabel("OAuth Token:", 30, 380)
-$twitchOAuthField = GUICtrlCreateInput("", 100, 377, 120, Default, $ES_PASSWORD)
+$twitchOAuthField = GUICtrlCreateInput("", 100, 377, 120, Default, BitOR($ES_PASSWORD,$ES_AUTOHSCROLL))
 GUICtrlCreateLabel("Twitch Channel:", 20, 410)
 $twitchChannelField = GUICtrlCreateInput("", 100, 407, 120)
 $twitchConnectButton = GUICtrlCreateButton("Connect to Twitch", 20, 430, 200)
