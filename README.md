@@ -5,7 +5,7 @@ This application is designed to time chat commands to sync up with music on a Tw
   - Save and share "Light Plans" in JSON format.
   - Integrates with Twitch IRC Chat
   - Sync up your chat commands with events in your favorite Twitch.tv streams. 
-  
+
 ## Using LightPlan
 Using LightPlan involves adding events to the LightPlan event table. Each event consists of an offset in mm:ss.SSS format, a chat command to issue when the event fires, and a description. These events, the song artist and title information, and the author of the LightPlan may be saved in JSON format. When the desired LightPlan has been created, connect to the Twitch channel chat that will be the target of the commands. Once connected, you may start the Light Plan. 
 
@@ -46,16 +46,17 @@ In order for the timing to work, you must start the LightPlan at the planned sta
 LightPlans may be saved and opened in JSON format. To Open a previously saved file, issue File > Open Light Plan. To save the file you are currently working on issue File > Save Light Plan.
 
 ## Releases
-The current release will be compiled to EXE format and stored in the releases directory. You may also clone this repository and run it from the AutoIt console. 
+The current release may be found here:
+[LightPlan v0.91 alpha](https://github.com/chillfactor032/lightplan/releases/tag/v0.91)
 
 ## Dependencies
 This application makes use of the following libraries
  - AutoIt JSON UDF
  - - Author: Ward (with some work from others)
- - - Forum Link: https://www.autoitscript.com/forum/topic/148114-a-non-strict-json-udf-jsmn/
+ - - Forum Link: [Forum Link](https://www.autoitscript.com/forum/topic/148114-a-non-strict-json-udf-jsmn/)
  - AutoIt IRC UDF
  - - Author: Robert Maehl (rcmaehl) based on work by chip/mcgod
- - - Forum Link: https://www.autoitscript.com/forum/topic/159285-irc-udf-updated-version-of-chips-irc-udf-release-v122-09062016-technical-writer-needed/
+ - - Forum Link: [Forum Link](https://www.autoitscript.com/forum/topic/159285-irc-udf-updated-version-of-chips-irc-udf-release-v122-09062016-technical-writer-needed/)
  
 ### Contact
     GitHub: chillfactor032
