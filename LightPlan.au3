@@ -19,13 +19,13 @@ Opt("TCPTimeout", 500)
 Opt("GUIOnEventMode", 1)
 
 ; Contants
-$VERSION = "0.92"
+$VERSION = "0.93"
 $GUI_HEIGHT = 650
 $GUI_WIDTH = 650
 $CONFIG_DIR = @LocalAppDataDir & "\LightPlan"
 
 ;GUI Contruction
-$gui = GUICreate("Light Plan v" & $VERSION & " by ChillFactor032", $GUI_WIDTH, $GUI_HEIGHT)
+$gui = GUICreate("LightPlan v" & $VERSION & " by ChillFactor032", $GUI_WIDTH, $GUI_HEIGHT)
 
 ;Menu Items
 $menuFile = GUICtrlCreateMenu("File")
