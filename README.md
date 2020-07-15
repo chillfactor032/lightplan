@@ -7,18 +7,20 @@ This application is designed to time chat commands to sync up with music on a Tw
   - Sync up your chat commands with events in your favorite Twitch.tv streams. 
 
 ## Using LightPlan
-Using LightPlan involves adding events to the LightPlan event table. Each event consists of an offset in mm:ss.SSS format, a chat command to issue when the event fires, and a description. These events, the song artist and title information, and the author of the LightPlan may be saved in JSON format. When the desired LightPlan has been created, connect to the Twitch channel chat that will be the target of the commands. Once connected, you may start the Light Plan. 
+Using LightPlan involves adding events to the LightPlan event table. Each event consists of an offset in mm:ss.SSS format, a chat command to issue when the event fires, and a description. These events, the song artist and title information, and the author of the LightPlan may be saved in JSON format. When the desired LightPlan has been created, connect to the Twitch channel chat that will be the target of the commands. Once connected, you may start the Light Plan and the events will fire according to the time offsets provided.
 
 ##### Adding Events to the LightPlan
-1. Add and offset to the Offset field in the following format: mm:ss.SSS (e.g. 01:23.456)
-2. Add the chat command to be issued when this event fires (e.g. !strobe).
-3. Add a description for the event so others can follow (e.g. Chorus 1)
-4. Click "Add Event" button.
+1. Click the "Add Event" button to show the event dialog.
+2. Add and offset to the Offset field in the following format: mm:ss.SSS (e.g. 01:23.456)
+3. Add the chat command to be issued when this event fires (e.g. !strobe).
+4. Add a description for the event so others can follow (e.g. Chorus 1)
+5. Click "Save Event" button.
 
-##### Updating Events on the LightPlan
-1. Click the event in the table that you wish to update.
-2. Edit the desired field for the event (e.g. Chat Command or Offset)
-3. Click "Update Event" button to commit your changes.
+##### Editing Events on the LightPlan
+1. Click the event in the table that you wish to edit.
+2. Click "Edit Event"
+3. In the edit dialog, make the desired changes to the event.
+4. Commit the changes by clicking "Save Event".
 
 ##### Deleting Events from the LightPlan
 1. Click the event in the table that you wish to delete.
@@ -47,7 +49,7 @@ LightPlans may be saved and opened in JSON format. To Open a previously saved fi
 
 ## Releases
 The current release may be found here:
-[LightPlan v0.91 alpha](https://github.com/chillfactor032/lightplan/releases/tag/v0.91)
+[LightPlan v0.92 alpha](https://github.com/chillfactor032/lightplan/releases/tag/v0.92)
 
 ## Dependencies
 This application makes use of the following libraries
