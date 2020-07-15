@@ -1,0 +1,88 @@
+{
+	"light_plan": {
+		"song_artist_title": "Rick Astley - Never Gonna Give You Up",
+		"author": "chillfactor032",
+		"events": [
+			{
+				"offset": "00:10.000",
+				"command": "!tropical",
+				"description": "Intro"
+			},
+			{
+				"offset": "00:18.000",
+				"command": "!arctic",
+				"description": "Verse 1A"
+			},
+			{
+				"offset": "00:26.800",
+				"command": "!sunset",
+				"description": "Verse 1B"
+			},
+			{
+				"offset": "00:35.250",
+				"command": "!aurora",
+				"description": "Verse 1C"
+			},
+			{
+				"offset": "00:43.750",
+				"command": "!hypelights",
+				"description": "Chorus 1"
+			},
+			{
+				"offset": "01:00.600",
+				"command": "!tropical",
+				"description": "Verse 2A"
+			},
+			{
+				"offset": "01:09.000",
+				"command": "!spring",
+				"description": "Verse 2B"
+			},
+			{
+				"offset": "01:17.500",
+				"command": "!arctic",
+				"description": "Verse 3C"
+			},
+			{
+				"offset": "01:26.000",
+				"command": "!hypelights",
+				"description": "Chorus 2"
+			},
+			{
+				"offset": "01:59.650",
+				"command": "!arctic",
+				"description": "Never Gonna Give 1"
+			},
+			{
+				"offset": "02:08.100",
+				"command": "!spring",
+				"description": "Never Gonna Give 2"
+			},
+			{
+				"offset": "02:16.600",
+				"command": "!tropical",
+				"description": "Verse 3A"
+			},
+			{
+				"offset": "02:26.000",
+				"command": "!aurora",
+				"description": "Verse 2B"
+			},
+			{
+				"offset": "02:33.500",
+				"command": "!spring",
+				"description": "Verse 3C"
+			},
+			{
+				"offset": "02:42.000",
+				"command": "!hypelights",
+				"description": "Chorus 3"
+			},
+			{
+				"offset": "03:15.750",
+				"command": "!deep",
+				"description": "Fade Out"
+			}
+		]
+	}
+}
