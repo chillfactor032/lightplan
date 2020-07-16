@@ -49,7 +49,7 @@ LightPlans may be saved and opened in JSON format. To Open a previously saved fi
 
 ## Releases
 The current release may be found here:
-[LightPlan v0.92 alpha](https://github.com/chillfactor032/lightplan/releases/tag/v0.92)
+[LightPlan v0.93 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.93)
 
 ## Dependencies
 This application makes use of the following libraries
