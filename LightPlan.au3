@@ -19,13 +19,13 @@ Opt("TCPTimeout", 500)
 Opt("GUIOnEventMode", 1)
 
 ; Contants
-$VERSION = "0.92"
+$VERSION = "0.93"
 $GUI_HEIGHT = 650
 $GUI_WIDTH = 650
 $CONFIG_DIR = @LocalAppDataDir & "\LightPlan"
 
 ;GUI Contruction
-$gui = GUICreate("Light Plan v" & $VERSION & " by ChillFactor032", $GUI_WIDTH, $GUI_HEIGHT)
+$gui = GUICreate("LightPlan v" & $VERSION & " by ChillFactor032", $GUI_WIDTH, $GUI_HEIGHT)
 
 ;Menu Items
 $menuFile = GUICtrlCreateMenu("File")
@@ -90,7 +90,7 @@ GUICtrlSetBkColor($statusEdit, $COLOR_WHITE)
 GUICtrlSetFont($statusEdit, 8.5, Default, Default, "Courier New")
 
 ;Event Editor Dialog
-$eventEditDialog = GUICreate("Add or Edit Event", 190, 220, Default, Default, $WS_DLGFRAME)
+$eventEditDialog = GUICreate("Add or Edit Event", 190, 220, Default, Default, $WS_DLGFRAME, $WS_EX_TOPMOST)
 GUICtrlCreateLabel("Offset (mm:ss.SSS):", 10, 10)
 $eventOffsetField = GUICtrlCreateInput("", 10, 30, 165)
 GUICtrlCreateLabel("Command:", 10, 60)
@@ -146,6 +146,7 @@ $eventDialogNew = True
 $includeDescChecked = False
 $nextMsg = ""
 $twitchConnectionTimer = 0
+$pingTimer = 0
 
 ;PreScript Actions
 _GUICtrlListView_SortItems(GUICtrlGetHandle($planListView), 0)
@@ -304,11 +305,19 @@ Func eventDialogSave()
 EndFunc
 
 Func toggleEventDialog()
+   ;Set the dialog's position to the center of the main GUI
+   Local $pos = WinGetPos($gui, "")
+   If @error == 0 Then
+	  WinMove($eventEditDialog, "", ($pos[0]+($GUI_WIDTH/2))-(190/2), ($pos[1]+($GUI_HEIGHT/2))-(220/2))
+   EndIf
+
    If $eventDialogVisible == False Then
 	  $eventDialogVisible = True
+	  GUICtrlSetState($planListView, $GUI_DISABLE)
 	  GUISetState(@SW_SHOW, $eventEditDialog)
    Else
 	  $eventDialogVisible = False
+	  GUICtrlSetState($planListView, $GUI_ENABLE)
 	  GUISetState(@SW_HIDE, $eventEditDialog)
    EndIf
 EndFunc
