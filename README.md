@@ -47,6 +47,18 @@ In order for the timing to work, you must start the LightPlan at the planned sta
 ##### Save/Open the LightPlan Files
 LightPlans may be saved and opened in JSON format. To Open a previously saved file, issue File > Open Light Plan. To save the file you are currently working on issue File > Save Light Plan.
 
+##### LightPlan Creation Wizard
+A wizard to help in the initial creation of a LightPlan is available in File > LightPlan Creation Wizard. This wizard uses the space bar as a hotkey. To start the timer, click the space bar once. Any other space bar presses will add events at that time stamp. Click Done to add the events to the current LightPlan. After the events have been added, edit the commands and descriptions to the desired values. 
+
+An example use case:
+ - Load your song in Youtube.
+ - Pause the video to the beginning of the song
+ - Click the play button and space bar simultaneously to start the song and the LightPlan timer.
+ - Press the space bar in time to the song where you want the lights to changes
+ - When finished, click Done
+ - Click Yes on the confirmation dialog
+ - Edit the new events to have meaningful commands and descriptions
+
 ## Releases
 The current release may be found here:
 [LightPlan v0.93 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.93)

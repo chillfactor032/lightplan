@@ -13,16 +13,42 @@
 #include <ColorConstants.au3>
 #include <GuiEdit.au3>
 #include <ScrollBarsConstants.au3>
+#include <GuiListBox.au3>
+#include <GuiComboBox.au3>
+#include <GuiComboBoxEx.au3>
 
 ; Options
 Opt("TCPTimeout", 500)
 Opt("GUIOnEventMode", 1)
 
 ; Contants
-$VERSION = "0.93"
+$VERSION = "0.94"
 $GUI_HEIGHT = 650
 $GUI_WIDTH = 650
 $CONFIG_DIR = @LocalAppDataDir & "\LightPlan"
+$DEFAULT_CMD_STR = ""
+Dim $DEFAULT_CMDS[12][2]
+$DEFAULT_CMDS[0][0] = 11
+$DEFAULT_CMDS[1][1] = "!hypelights"
+$DEFAULT_CMDS[2][1] = "!police"
+$DEFAULT_CMDS[3][1] = "!strobe"
+$DEFAULT_CMDS[4][1] = "!spring"
+$DEFAULT_CMDS[5][1] = "!tropical"
+$DEFAULT_CMDS[6][1] = "!arctic"
+$DEFAULT_CMDS[7][1] = "!sunset"
+$DEFAULT_CMDS[8][1] = "!aurora"
+$DEFAULT_CMDS[9][1] = "!deep"
+$DEFAULT_CMDS[10][1] = "!dim"
+$DEFAULT_CMDS[11][1] = "!normal"
+For $i = 1 To $DEFAULT_CMDS[0][0]
+   $DEFAULT_CMDS[$i][0] = "QUICK_CMD_"&$i
+   If $i > 1 Then
+	  $DEFAULT_CMD_STR &= "|" & $DEFAULT_CMDS[$i][1]
+   Else
+	  $DEFAULT_CMD_STR &= $DEFAULT_CMDS[$i][1]
+   EndIf
+Next
+
 
 ;GUI Contruction
 $gui = GUICreate("LightPlan v" & $VERSION & " by ChillFactor032", $GUI_WIDTH, $GUI_HEIGHT)
@@ -32,6 +58,9 @@ $menuFile = GUICtrlCreateMenu("File")
 $menuFileNewButton = GUICtrlCreateMenuItem("New Light Plan", $menuFile)
 $menuFileOpenButton = GUICtrlCreateMenuItem("Open Light Plan", $menuFile)
 $menuFileSaveButton = GUICtrlCreateMenuItem("Save Light Plan", $menuFile)
+GUICtrlCreateMenuItem("", $menuFile)
+$menuFileWizardButton = GUICtrlCreateMenuItem("LightPlan Creation Wizard", $menuFile)
+GUICtrlCreateMenuItem("", $menuFile)
 $menuFileExitButton = GUICtrlCreateMenuItem("Exit", $menuFile)
 $menuHelp = GUICtrlCreateMenu("Help")
 $menuHelpButton = GUICtrlCreateMenuItem("Help Light Plan", $menuHelp)
@@ -94,15 +123,36 @@ $eventEditDialog = GUICreate("Add or Edit Event", 190, 220, Default, Default, $W
 GUICtrlCreateLabel("Offset (mm:ss.SSS):", 10, 10)
 $eventOffsetField = GUICtrlCreateInput("", 10, 30, 165)
 GUICtrlCreateLabel("Command:", 10, 60)
-$eventCmdField = GUICtrlCreateInput("", 10, 80, 165)
+$eventCmdCombo = GUICtrlCreateCombo("", 10, 80, 165)
+GUICtrlSetData($eventCmdCombo, $DEFAULT_CMD_STR)
 GUICtrlCreateLabel("Description:", 10, 110)
 $eventDescField = GUICtrlCreateInput("", 10, 130, 165)
 $eventDialogSaveButton = GUICtrlCreateButton("Save Event", 10, 160, 80)
 $eventDialogCancelButton = GUICtrlCreateButton("Cancel", 115, 160, 60)
 
+;LightPlan Wizard
+$wizardGUI = GUICreate("Create LightPlan Wizard", 360, 330, Default, Default, $WS_DLGFRAME, $WS_EX_TOPMOST)
+GUICtrlCreateLabel("Start song and use the space bar to start the timer."&@CRLF& _
+   "Use the space bar again to add light events."&@CRLF&@CRLF& _
+   "This dialog will have control over your spacebar while it is open.", 10, 10)
+
+GUICtrlCreateLabel("",10,75,340,2,$SS_SUNKEN)
+GUICtrlCreateLabel("Events Added: ", 10, 80)
+GUICtrlCreateLabel("Time: ", 220, 100)
+$wizardTimeLabel = GUICtrlCreateLabel("00:00.000", 220, 120, 100)
+GUICtrlSetFont($wizardTimeLabel, 16)
+$wizardResetTimerButton = GUICtrlCreateButton("Reset Timer", 220, 155, 130)
+$wizardList= GUICtrlCreateList("", 10, 95, 200, 180)
+$wizardAddButton = GUICtrlCreateButton("Done", 220, 245, 130)
+$wizardCancelButton = GUICtrlCreateButton("Cancel", 220, 275, 130)
+$wizardDeleteButton = GUICtrlCreateButton("Delete", 10, 275)
+GUICtrlSetState($wizardDeleteButton, $GUI_DISABLE)
+$wizardDeleteAllButton = GUICtrlCreateButton("Delete All Events", 120, 275)
+
 ;Register Event Listeners for GUI Components
 GUISetOnEvent($GUI_EVENT_CLOSE, "menuExit", $gui)
 GUISetOnEvent($GUI_EVENT_CLOSE, "toggleEventDialog", $eventEditDialog)
+GUISetOnEvent($GUI_EVENT_CLOSE, "toggleEventDialog", $wizardGUI)
 GUICtrlSetOnEvent($menuFileExitButton, "menuExit")
 GUICtrlSetOnEvent($menuFileNewButton, "menuNewLightPlan")
 GUICtrlSetOnEvent($menuFileOpenButton, "menuOpenLightPlan")
@@ -123,6 +173,13 @@ GUICtrlSetOnEvent($calcDelayButton, "calcStreamDelay")
 GUICtrlSetOnEvent($startPlanButton, "startPlanButton")
 GUICtrlSetOnEvent($eventDialogCancelButton, "toggleEventDialog")
 GUICtrlSetOnEvent($eventDialogSaveButton, "eventDialogSave")
+GUICtrlSetOnEvent($menuFileWizardButton, "toggleWizard")
+GUICtrlSetOnEvent($wizardCancelButton, "toggleWizard")
+GUICtrlSetOnEvent($wizardResetTimerButton, "wizardResetTimerButton")
+GUICtrlSetOnEvent($wizardList, "wizardList")
+GUICtrlSetOnEvent($wizardDeleteButton, "wizardDeleteButton")
+GUICtrlSetOnEvent($wizardDeleteAllButton, "wizardDeleteAllButton")
+GUICtrlSetOnEvent($wizardAddButton, "wizardAddButton")
 
 ;Global Variables
 Dim $eventArray[1][3]
@@ -147,6 +204,11 @@ $includeDescChecked = False
 $nextMsg = ""
 $twitchConnectionTimer = 0
 $pingTimer = 0
+$wizardGUIVisible = False
+$wizardTimeElapsed = 0
+$wizardTimerStarted = False
+$wizardTimer = 0
+$videoLoaded = False
 
 ;PreScript Actions
 _GUICtrlListView_SortItems(GUICtrlGetHandle($planListView), 0)
@@ -173,6 +235,7 @@ readConfig()
 ;Show the GUI
 GUISetState(@SW_SHOW, $gui)
 GUISetState(@SW_HIDE, $eventEditDialog)
+GUISetState(@SW_HIDE, $wizardGUI)
 
 ;startTwitchTimer
 $twitchConnectionTimer = TimerInit()
@@ -180,6 +243,15 @@ $twitchConnectionTimer = TimerInit()
 ;Main Loop
 While True
    Sleep(25)
+
+   While $wizardTimerStarted == True
+	  Sleep(25)
+	  GUICtrlSetData($wizardTimeLabel, msToTimeFormat(TimerDiff($wizardTimer)))
+	  If $wizardTimerStarted == False Then
+		 GUICtrlSetData($wizardTimeLabel, "00:00.000")
+	  EndIf
+   WEnd
+
    If $startLightPlan == True Then
 	  $channel = GUICtrlRead($twitchChannelField)
 	  $elapsed = 0
@@ -272,10 +344,82 @@ While True
    EndIf
 WEnd
 
+Func wizardAddButton()
+   GUISetState(@SW_HIDE, $wizardGUI)
+   Local $answer = MsgBox($MB_YESNO, "LightPlan", "Are you ready to add these events to your LightPlan?")
+   GUISetState(@SW_SHOW, $wizardGUI)
+   If $answer == $IDYES Then
+	  Local $cnt = _GUICtrlListBox_GetCount($wizardList)
+	  For $i = 0 To $cnt-1
+		 addEventToListView(_GUICtrlListBox_GetText($wizardList, $i), "placeholder", "placeholder")
+	  Next
+	  toggleWizard()
+	  wizardDeleteAllButton()
+   EndIf
+EndFunc
+
+Func wizardList()
+   GUICtrlSetState($wizardDeleteButton, $GUI_ENABLE)
+EndFunc
+
+Func wizardDeleteAllButton()
+   _GUICtrlListBox_ResetContent($wizardList)
+EndFunc
+
+Func wizardDeleteButton()
+   Local $sel = _GUICtrlListBox_GetCurSel($wizardList)
+   _GUICtrlListBox_DeleteString($wizardList, $sel)
+   GUICtrlSetState($wizardDeleteButton, $GUI_DISABLE)
+EndFunc
+
+Func wizardResetTimerButton()
+   $wizardTimerStarted = False
+   GUICtrlSetData($wizardTimeLabel, "00:00.000")
+EndFunc
+
+Func wizardAddEvent()
+   If $wizardTimerStarted == False Then
+	  $wizardTimer = TimerInit()
+	  $wizardTimerStarted = True
+   Else
+	  _GUICtrlListBox_AddString($wizardList, msToTimeFormat(TimerDiff($wizardTimer)))
+   EndIf
+EndFunc
+
+Func toggleWizardTimer()
+   If $wizardTimerStarted == True Then
+	  $wizardTimerStarted = False
+   Else
+	  $wizardTimerStarted = True
+   EndIf
+EndFunc
+
+Func toggleWizard()
+   ;Set the dialog's position to the center of the main GUI
+   Local $pos = WinGetPos($gui, "")
+   If @error == 0 Then
+	  WinMove($wizardGUI, "", ($pos[0]+($GUI_WIDTH/2))-(360/2), ($pos[1]+($GUI_HEIGHT/2))-(330/2))
+   EndIf
+
+   If $wizardGUIVisible == False Then
+	  $wizardGUIVisible = True
+	  GUICtrlSetState($planListView, $GUI_DISABLE)
+	  HotKeySet("{SPACE}", "wizardAddEvent")
+	  GUISetState(@SW_SHOW, $wizardGUI)
+   Else
+	  $wizardGUIVisible = False
+	  HotKeySet("{SPACE}")
+	  $wizardTimerStarted = False
+	  GUICtrlSetData($wizardTimeLabel, "00:00.000")
+	  GUICtrlSetState($planListView, $GUI_ENABLE)
+	  GUISetState(@SW_HIDE, $wizardGUIVisible)
+   EndIf
+EndFunc
+
 Func eventDialogSave()
    Dim $newEventArr[3]
    $newEventArr[0] = GUICtrlRead($eventOffsetField)
-   $newEventArr[1] = GUICtrlRead($eventCmdField)
+   $newEventArr[1] = GUICtrlRead($eventCmdCombo)
    $newEventArr[2] = GUICtrlRead($eventDescField)
 
    Local $result = False
@@ -290,7 +434,7 @@ Func eventDialogSave()
 	  $result = addEventToListView($newEventArr[0], $newEventArr[1], $newEventArr[2])
 	  If $result == True Then
 		 GUICtrlSetData($eventOffsetField, "")
-		 GUICtrlSetData($eventCmdField, "")
+		 _GUICtrlComboBox_SetCurSel($eventCmdCombo, -1)
 		 GUICtrlSetData($eventDescField, "")
 	  EndIf
    Else
@@ -374,6 +518,7 @@ Func saveConfig()
    IniWrite($CONFIG_DIR&"\lightplan.config", "Twitch", "User", $user)
    IniWrite($CONFIG_DIR&"\lightplan.config", "Twitch", "Channel", $channel)
    IniWrite($CONFIG_DIR&"\lightplan.config", "Twitch", "OAuthToken", $oauth)
+
    statusMsg("Saved Config: "&$CONFIG_DIR&"\lightplan.config")
 EndFunc
 
@@ -418,7 +563,7 @@ Func startPlanButton()
 	  GUICtrlSetState($deleteEventButton, $GUI_ENABLE)
 	  GUICtrlSetState($twitchConnectButton, $GUI_ENABLE)
 	  GUICtrlSetState($eventOffsetField, $GUI_ENABLE)
-	  GUICtrlSetState($eventCmdField, $GUI_ENABLE)
+	  GUICtrlSetState($eventCmdCombo, $GUI_ENABLE)
 	  GUICtrlSetState($eventDescField, $GUI_ENABLE)
 	  GUICtrlSetState($calcDelayButton, $GUI_ENABLE)
 	  GUICtrlSetState($twitchOAuthField, $GUI_ENABLE)
@@ -441,7 +586,7 @@ Func startPlanButton()
 	  GUICtrlSetState($twitchConnectButton, $GUI_DISABLE)
 	  GUICtrlSetState($calcDelayButton, $GUI_DISABLE)
 	  GUICtrlSetState($eventOffsetField, $GUI_DISABLE)
-	  GUICtrlSetState($eventCmdField, $GUI_DISABLE)
+	  GUICtrlSetState($eventCmdCombo, $GUI_DISABLE)
 	  GUICtrlSetState($eventDescField, $GUI_DISABLE)
 	  GUICtrlSetState($twitchOAuthField, $GUI_DISABLE)
 	  GUICtrlSetState($twitchUserField, $GUI_DISABLE)
@@ -518,7 +663,7 @@ Func deleteSelectedEvent()
 
    _GUICtrlListView_DeleteItemsSelected($planListView)
    GUICtrlSetData($eventOffsetField, "")
-   GUICtrlSetData($eventCmdField, "")
+   _GUICtrlComboBox_SetCurSel($eventCmdCombo, -1)
    GUICtrlSetData($eventDescField, "")
    GUICtrlSetState($eventEditButton, $GUI_DISABLE)
    GUICtrlSetState($deleteEventButton, $GUI_DISABLE)
@@ -564,7 +709,7 @@ Func newEventButton()
    WinSetTitle($eventEditDialog, "", "New Event")
    $eventDialogNew = True
    GUICtrlSetData($eventOffsetField, "")
-   GUICtrlSetData($eventCmdField, "")
+   _GUICtrlComboBox_SetCurSel($eventCmdCombo, -1)
    GUICtrlSetData($eventDescField, "")
    toggleEventDialog()
 EndFunc
@@ -664,7 +809,7 @@ Func clearGUI()
    GUICtrlSetData($songArtistTitleField, "")
    GUICtrlSetData($lightPlanAuthorField, "")
    GUICtrlSetData($eventDescField, "")
-   GUICtrlSetData($eventCmdField, "")
+   _GUICtrlComboBox_SetCurSel($eventCmdCombo, -1)
    GUICtrlSetData($eventOffsetField, "")
    $currentFile = ""
 EndFunc
@@ -737,7 +882,10 @@ Func planListViewItemClick()
 	  Return
    EndIf
    GUICtrlSetData($eventOffsetField, $selectedItem[1])
-   GUICtrlSetData($eventCmdField, $selectedItem[2])
+   ;GUICtrlSetData($eventCmdCombo, $selectedItem[2])
+   ;_GUICtrlComboBoxEx_SetEditText($eventCmdCombo, $selectedItem[2])
+   ;ControlGetHandle($eventEditDialog, "", $eventCmdCombo)
+   ControlSetText($eventEditDialog, "", $eventCmdCombo, $selectedItem[2])
    GUICtrlSetData($eventDescField, $selectedItem[3])
    GUICtrlSetState($eventEditButton, $GUI_ENABLE)
    GUICtrlSetState($deleteEventButton, $GUI_ENABLE)
