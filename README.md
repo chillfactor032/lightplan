@@ -52,16 +52,16 @@ A wizard to help in the initial creation of a LightPlan is available in File > L
 
 An example use case:
  - Load your song in Youtube.
- - Pause the video to the beginning of the song
+ - Pause the video at the beginning of the song.
  - Click the play button and space bar simultaneously to start the song and the LightPlan timer.
- - Press the space bar in time to the song where you want the lights to changes
- - When finished, click Done
- - Click Yes on the confirmation dialog
- - Edit the new events to have meaningful commands and descriptions
+ - Press the space bar in time to the song where you want the lights to changes.
+ - When finished, click Done.
+ - Click Yes on the confirmation dialog.
+ - Edit the new events to have meaningful commands and descriptions.
 
 ## Releases
 The current release may be found here:
-[LightPlan v0.93 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.93)
+[LightPlan v0.94 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.94)
 
 ## Dependencies
 This application makes use of the following libraries
