@@ -22,7 +22,7 @@ Opt("TCPTimeout", 500)
 Opt("GUIOnEventMode", 1)
 
 ; Contants
-$VERSION = "0.94"
+$VERSION = "0.95"
 $GUI_HEIGHT = 650
 $GUI_WIDTH = 650
 $CONFIG_DIR = @LocalAppDataDir & "\LightPlan"
@@ -107,7 +107,7 @@ GUICtrlCreateGroup("Control", 410, 285, 230, 170)
 $includeDescCheckBox = GUICtrlCreateCheckbox("Include Description in Command",  420, 305)
 $timeElapsedLabel = GUICtrlCreateLabel("Time Elapsed: 00:00.000", 420, 335)
 $eventsFiredLabel = GUICtrlCreateLabel("Events Fired: 0/0", 425, 355, 150)
-$nextEventLabel = GUICtrlCreateLabel("Next Event: ", 431, 375, 150)
+$nextEventLabel = GUICtrlCreateLabel("Next Event: ", 431, 375, 200)
 $startPlanButton = GUICtrlCreateButton("Start Light Plan", 420, 395, 210, 50)
 GUICtrlSetFont($startPlanButton, 16, $FW_HEAVY)
 GUICtrlSetState($startPlanButton, $GUI_DISABLE)
@@ -320,7 +320,7 @@ While True
 		 ;Update the GUI for time elapsed 4 times per sec
 		 If TimerDiff($elapsedTimer) >= 250 Then
 			GUICtrlSetData($timeElapsedLabel, "Time Elapsed: " & msToTimeFormat($elapsed, False))
-			GUICtrlSetData($nextEventLabel, "Next Event: " & $events[0][1] & " in " &  msToTimeFormat(($events[0][0]-$streamDelay)-($elapsed-$shiftDelay+$window), False))
+			GUICtrlSetData($nextEventLabel, "Next Event: " & StringLeft($events[0][1], 15) & " in " &  msToTimeFormat(($events[0][0]-$streamDelay)-($elapsed-$shiftDelay+$window), False))
 			$elapsedTimer = TimerInit()
 		 EndIf
 
@@ -343,6 +343,19 @@ While True
 	  EndIf
    EndIf
 WEnd
+
+Func editDialogSetComboText($text)
+   Local $ind = _GUICtrlComboBox_FindString($eventCmdCombo, $text)
+   If $ind < 0 Then
+	  ;Not a default command
+	  _GUICtrlComboBox_ResetContent($eventCmdCombo)
+	  GUICtrlSetData($eventCmdCombo, $text & "|" & $DEFAULT_CMD_STR)
+	  _GUICtrlComboBox_SetCurSel($eventCmdCombo, 0)
+   Else
+	  ;Default command
+	  _GUICtrlComboBox_SetCurSel($eventCmdCombo, $ind)
+   EndIf
+EndFunc
 
 Func wizardAddButton()
    GUISetState(@SW_HIDE, $wizardGUI)
@@ -708,7 +721,7 @@ EndFunc
 Func newEventButton()
    WinSetTitle($eventEditDialog, "", "New Event")
    $eventDialogNew = True
-   GUICtrlSetData($eventOffsetField, "")
+   GUICtrlSetData($eventOffsetField, "00:00.000")
    _GUICtrlComboBox_SetCurSel($eventCmdCombo, -1)
    GUICtrlSetData($eventDescField, "")
    toggleEventDialog()
@@ -882,10 +895,7 @@ Func planListViewItemClick()
 	  Return
    EndIf
    GUICtrlSetData($eventOffsetField, $selectedItem[1])
-   ;GUICtrlSetData($eventCmdCombo, $selectedItem[2])
-   ;_GUICtrlComboBoxEx_SetEditText($eventCmdCombo, $selectedItem[2])
-   ;ControlGetHandle($eventEditDialog, "", $eventCmdCombo)
-   ControlSetText($eventEditDialog, "", $eventCmdCombo, $selectedItem[2])
+   editDialogSetComboText($selectedItem[2])
    GUICtrlSetData($eventDescField, $selectedItem[3])
    GUICtrlSetState($eventEditButton, $GUI_ENABLE)
    GUICtrlSetState($deleteEventButton, $GUI_ENABLE)
