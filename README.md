@@ -61,7 +61,7 @@ An example use case:
 
 ## Releases
 The current release may be found here:
-[LightPlan v0.94 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.94)
+[LightPlan v0.95 beta](https://github.com/chillfactor032/lightplan/releases/tag/v0.95)
 
 ## Dependencies
 This application makes use of the following libraries
