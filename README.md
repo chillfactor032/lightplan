@@ -1,3 +1,9 @@
+# Notice
+
+This tool has been deprecated and no longer maintained. Please use Light Plan Studio instead. It is at:
+
+https://github.com/chillfactor032/LightPlanStudio
+
 # LightPlan
 
 This application is designed to time chat commands to sync up with music on a Twitch.tv stream.
